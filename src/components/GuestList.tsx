@@ -85,7 +85,7 @@ export function GuestList() {
   return (
     <section
       id="circles"
-      className="relative paper py-24 lg:py-32 px-5 lg:px-24 bg-ivory-50"
+      className="relative paper py-24 lg:py-32 px-5 lg:pl-48 lg:pr-16 xl:pr-24 bg-ivory-50"
     >
       <SectionHeader
         numeral="II"

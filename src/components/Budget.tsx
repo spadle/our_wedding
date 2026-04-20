@@ -40,7 +40,7 @@ export function Budget() {
   return (
     <section
       id="budget"
-      className="relative paper py-24 lg:py-32 px-5 lg:px-24"
+      className="relative paper py-24 lg:py-32 px-5 lg:pl-48 lg:pr-16 xl:pr-24"
     >
       <SectionHeader
         numeral="IV"

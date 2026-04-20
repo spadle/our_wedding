@@ -7,7 +7,7 @@ export function Postscript() {
   return (
     <section
       id="vows"
-      className="relative paper py-24 lg:py-32 px-5 lg:px-24 bg-oxblood-700 text-ivory-100"
+      className="relative paper py-24 lg:py-32 px-5 lg:pl-48 lg:pr-16 xl:pr-24 bg-oxblood-700 text-ivory-100"
     >
       <div
         className="absolute inset-0 opacity-15 pointer-events-none"

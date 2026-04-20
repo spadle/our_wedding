@@ -14,7 +14,7 @@ export function Hero() {
   return (
     <section
       id="prelude"
-      className="relative min-h-[100svh] paper pt-24 lg:pt-20 pb-10 px-5 lg:px-16 flex flex-col"
+      className="relative min-h-[100svh] paper pt-24 lg:pt-16 pb-10 px-5 lg:pl-40 lg:pr-16 xl:pl-48 flex flex-col"
     >
       {/* Corner marks */}
       <div className="hidden sm:flex justify-between eyebrow text-ink-900/60">

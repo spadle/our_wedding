@@ -124,7 +124,7 @@ export function TaskTracker() {
   }, [state]);
 
   return (
-    <section id="tasks" className="relative paper py-24 lg:py-32 px-5 lg:px-24">
+    <section id="tasks" className="relative paper py-24 lg:py-32 px-5 lg:pl-48 lg:pr-16 xl:pr-24">
       <SectionHeader
         numeral="III"
         eyebrow="Chapter Three"
