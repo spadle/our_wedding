@@ -1,8 +1,10 @@
 import { motion } from "motion/react";
 import { useCountdown } from "../lib/useCountdown";
 import { Floral, Ornament } from "./Ornament";
+import { useT } from "../i18n/context";
 
 export function Hero() {
+  const t = useT();
   const { days, hours, minutes, seconds } = useCountdown();
 
   const letter = (delay: number) => ({
@@ -18,10 +20,8 @@ export function Hero() {
     >
       {/* Corner marks */}
       <div className="hidden sm:flex justify-between eyebrow text-ink-900/60">
-        <span>An Invitation · Vol. I</span>
-        <span className="text-right">
-          <span className="numeral">MMXXVI</span> · Long Island, New York
-        </span>
+        <span>{t.hero.corner_left}</span>
+        <span className="text-right">{t.hero.corner_right}</span>
       </div>
 
       {/* Center stage */}
@@ -33,7 +33,7 @@ export function Hero() {
           className="flex items-center gap-5 mb-6 text-brass-700"
         >
           <Ornament width={90} />
-          <span className="eyebrow whitespace-nowrap">Paul &amp; Wendy are marrying</span>
+          <span className="eyebrow whitespace-nowrap">{t.hero.eyebrow}</span>
           <Ornament width={90} />
         </motion.div>
 
@@ -44,18 +44,10 @@ export function Hero() {
               className="block font-light"
               style={{ fontSize: "clamp(4rem, 18vw, 17rem)" }}
             >
-              <motion.span {...letter(0.1)} className="inline-block">
-                P
-              </motion.span>
-              <motion.span {...letter(0.16)} className="inline-block">
-                a
-              </motion.span>
-              <motion.span {...letter(0.22)} className="inline-block">
-                u
-              </motion.span>
-              <motion.span {...letter(0.28)} className="inline-block">
-                l
-              </motion.span>
+              <motion.span {...letter(0.1)} className="inline-block">P</motion.span>
+              <motion.span {...letter(0.16)} className="inline-block">a</motion.span>
+              <motion.span {...letter(0.22)} className="inline-block">u</motion.span>
+              <motion.span {...letter(0.28)} className="inline-block">l</motion.span>
             </span>
             <motion.span
               {...letter(0.45)}
@@ -68,21 +60,11 @@ export function Hero() {
               className="block font-light"
               style={{ fontSize: "clamp(4rem, 18vw, 17rem)" }}
             >
-              <motion.span {...letter(0.6)} className="inline-block">
-                W
-              </motion.span>
-              <motion.span {...letter(0.66)} className="inline-block">
-                e
-              </motion.span>
-              <motion.span {...letter(0.72)} className="inline-block">
-                n
-              </motion.span>
-              <motion.span {...letter(0.78)} className="inline-block">
-                d
-              </motion.span>
-              <motion.span {...letter(0.84)} className="inline-block">
-                y
-              </motion.span>
+              <motion.span {...letter(0.6)} className="inline-block">W</motion.span>
+              <motion.span {...letter(0.66)} className="inline-block">e</motion.span>
+              <motion.span {...letter(0.72)} className="inline-block">n</motion.span>
+              <motion.span {...letter(0.78)} className="inline-block">d</motion.span>
+              <motion.span {...letter(0.84)} className="inline-block">y</motion.span>
             </span>
           </h1>
 
@@ -100,7 +82,7 @@ export function Hero() {
         >
           <div className="hairline w-20" />
           <p className="font-display italic text-ink-900 text-2xl lg:text-4xl">
-            the tenth of October
+            {t.hero.date_line}
           </p>
           <div className="hairline w-20" />
         </motion.div>
@@ -111,7 +93,7 @@ export function Hero() {
           transition={{ duration: 1, delay: 1.2 }}
           className="mt-2 eyebrow text-ink-900/70"
         >
-          Two Thousand Twenty-Six
+          {t.hero.year}
         </motion.p>
 
         {/* Countdown */}
@@ -122,12 +104,12 @@ export function Hero() {
           className="mt-10 lg:mt-14 grid grid-cols-4 gap-4 lg:gap-10"
         >
           {[
-            { value: days, label: "days" },
-            { value: hours, label: "hours" },
-            { value: minutes, label: "minutes" },
-            { value: seconds, label: "seconds" },
-          ].map((u) => (
-            <div key={u.label} className="flex flex-col items-center">
+            { value: days, label: t.hero.days },
+            { value: hours, label: t.hero.hours },
+            { value: minutes, label: t.hero.minutes },
+            { value: seconds, label: t.hero.seconds },
+          ].map((u, i) => (
+            <div key={i} className="flex flex-col items-center">
               <span className="numeral text-4xl lg:text-6xl text-oxblood-700 tabular-nums">
                 {String(u.value).padStart(2, "0")}
               </span>
@@ -139,15 +121,15 @@ export function Hero() {
 
       {/* Bottom strip */}
       <div className="flex items-end justify-between text-ink-900/60 mt-6">
-        <span className="eyebrow hidden sm:inline">Ceremony · Catholic Mass</span>
+        <span className="eyebrow hidden sm:inline">{t.hero.foot_left}</span>
         <a
           href="#ceremony"
           className="eyebrow flex items-center gap-2 hover:text-oxblood-700 transition-colors"
         >
-          <span>Read on</span>
+          <span>{t.hero.read_on}</span>
           <span className="inline-block translate-y-[1px]">↓</span>
         </a>
-        <span className="eyebrow hidden sm:inline">Then · A long table</span>
+        <span className="eyebrow hidden sm:inline">{t.hero.foot_right}</span>
       </div>
     </section>
   );

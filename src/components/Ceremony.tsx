@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
 import { SectionHeader } from "./SectionHeader";
+import { useT } from "../i18n/context";
 
 export function Ceremony() {
+  const t = useT();
+  const c = t.ceremonySection;
+
   return (
     <section
       id="ceremony"
@@ -9,9 +13,9 @@ export function Ceremony() {
     >
       <SectionHeader
         numeral="I"
-        eyebrow="Chapter One"
-        title="The Day"
-        subtitle="A Catholic Mass, then a long table."
+        eyebrow={t.chapter.one}
+        title={c.title}
+        subtitle={c.subtitle}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 max-w-7xl">
@@ -22,9 +26,9 @@ export function Ceremony() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="lg:col-span-5"
         >
-          <p className="eyebrow text-brass-700 mb-5">I · The Ceremony</p>
+          <p className="eyebrow text-brass-700 mb-5">{c.one_eyebrow}</p>
           <p className="font-display italic text-3xl lg:text-4xl leading-[1.15] text-ink-900 text-balance">
-            The sacrament first — in a Catholic church. Familiar hymns, candlelight on brass, and the quiet weight of promises made before God.
+            {c.one_prose}
           </p>
         </motion.div>
 
@@ -35,11 +39,13 @@ export function Ceremony() {
           transition={{ duration: 1, delay: 0.15 }}
           className="lg:col-span-5 lg:col-start-8"
         >
-          <p className="eyebrow text-brass-700 mb-5">II · Afterward</p>
+          <p className="eyebrow text-brass-700 mb-5">{c.two_eyebrow}</p>
           <p className="font-display italic text-3xl lg:text-4xl leading-[1.15] text-ink-900 text-balance">
-            Then we gather at a restaurant — warm plates, good wine, a small circle we love. Currently considering{" "}
-            <span className="not-italic font-display text-oxblood-700">Del Vino</span>{" "}
-            (and keeping our eyes open).
+            {c.two_prose_pre}
+            <span className="not-italic font-display text-oxblood-700">
+              {c.two_prose_venue}
+            </span>
+            {c.two_prose_post}
           </p>
         </motion.div>
       </div>
@@ -53,12 +59,12 @@ export function Ceremony() {
         className="mt-20 lg:mt-28 grid grid-cols-2 lg:grid-cols-4 gap-6 border-t border-brass-500/40 pt-10"
       >
         {[
-          { label: "Date", value: "10 · 10 · 2026", hint: "Saturday" },
-          { label: "Ceremony", value: "Catholic Mass", hint: "Nuptial liturgy" },
-          { label: "Reception", value: "A restaurant", hint: "Menu forthcoming" },
-          { label: "Company", value: "~29 souls", hint: "Family & dearest" },
-        ].map((fact) => (
-          <div key={fact.label}>
+          { label: c.fact_date, value: c.fact_date_value, hint: c.fact_date_hint },
+          { label: c.fact_ceremony, value: c.fact_ceremony_value, hint: c.fact_ceremony_hint },
+          { label: c.fact_reception, value: c.fact_reception_value, hint: c.fact_reception_hint },
+          { label: c.fact_company, value: "~29", hint: c.fact_company_hint },
+        ].map((fact, i) => (
+          <div key={i}>
             <p className="eyebrow text-ink-900/50 mb-2">{fact.label}</p>
             <p className="font-display italic text-2xl lg:text-3xl text-oxblood-700">
               {fact.value}

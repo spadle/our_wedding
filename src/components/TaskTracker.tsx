@@ -1,8 +1,19 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { SectionHeader } from "./SectionHeader";
-import { priorityLabel, taskGroups, type SubTask } from "../data/tasks";
+import {
+  taskGroups,
+  type Priority,
+  type SubTaskId,
+} from "../data/tasks";
 import { usePersistentState } from "../lib/usePersistentState";
+import { useT } from "../i18n/context";
+
+type SubTask = {
+  id: string;
+  label: string;
+  note?: string;
+};
 
 type GroupState = {
   done: Record<string, boolean>;
@@ -16,7 +27,7 @@ const seed = (): State =>
     taskGroups.map((g) => [g.id, { done: {}, extras: [] }]),
   );
 
-const priorityDot = {
+const priorityDot: Record<Priority, string> = {
   high: "bg-oxblood-700",
   medium: "bg-brass-500",
   soon: "bg-sage-500",
@@ -60,6 +71,9 @@ function Check({ done, onClick }: { done: boolean; onClick: () => void }) {
 }
 
 export function TaskTracker() {
+  const t = useT();
+  const ts = t.tasksSection;
+
   const [state, setState] = usePersistentState<State>(
     "pw_tasks_v1",
     seed(),
@@ -103,12 +117,22 @@ export function TaskTracker() {
     });
   };
 
-  const progressFor = (gid: string) => {
+  const itemsFor = (gid: string): SubTask[] => {
     const group = taskGroups.find((g) => g.id === gid)!;
     const gs = state[gid] || { done: {}, extras: [] };
-    const all = [...group.tasks, ...gs.extras];
+    const core = group.itemIds.map<SubTask>((id) => ({
+      id,
+      label: ts.items[id as SubTaskId].label,
+      note: ts.items[id as SubTaskId].note || undefined,
+    }));
+    return [...core, ...gs.extras];
+  };
+
+  const progressFor = (gid: string) => {
+    const gs = state[gid] || { done: {}, extras: [] };
+    const all = itemsFor(gid);
     const total = all.length;
-    const done = all.filter((t) => gs.done[t.id]).length;
+    const done = all.filter((x) => gs.done[x.id]).length;
     return { total, done, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
   };
 
@@ -121,15 +145,15 @@ export function TaskTracker() {
     }
     return { total, done, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [state, t]);
 
   return (
     <section id="tasks" className="relative paper py-24 lg:py-32 px-5 lg:pl-48 lg:pr-16 xl:pr-24">
       <SectionHeader
         numeral="III"
-        eyebrow="Chapter Three"
-        title="The Work"
-        subtitle="Click a chapter. Expand. Check things off."
+        eyebrow={t.chapter.three}
+        title={ts.title}
+        subtitle={ts.subtitle}
       />
 
       {/* Overall progress */}
@@ -141,10 +165,12 @@ export function TaskTracker() {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14"
       >
         <div>
-          <p className="eyebrow text-brass-700 mb-2">Overall readiness</p>
+          <p className="eyebrow text-brass-700 mb-2">{ts.overall_readiness}</p>
           <p className="font-display italic text-4xl lg:text-5xl text-oxblood-700">
-            {overall.done} <span className="text-ink-900/40">of</span>{" "}
-            {overall.total} <span className="text-ink-900/40 text-3xl">things done</span>
+            {overall.done}{" "}
+            <span className="text-ink-900/40">{ts.of}</span>{" "}
+            {overall.total}{" "}
+            <span className="text-ink-900/40 text-3xl">{ts.things_done}</span>
           </p>
         </div>
         <div className="flex items-center gap-4 w-full sm:w-80">
@@ -155,7 +181,8 @@ export function TaskTracker() {
               animate={{ width: `${overall.pct}%` }}
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
-            <div className="absolute inset-y-0 left-0 shimmer bg-gradient-to-r from-transparent via-brass-500/60 to-transparent"
+            <div
+              className="absolute inset-y-0 left-0 shimmer bg-gradient-to-r from-transparent via-brass-500/60 to-transparent"
               style={{ width: `${overall.pct}%` }}
             />
           </div>
@@ -171,7 +198,8 @@ export function TaskTracker() {
           const p = progressFor(g.id);
           const isOpen = open === g.id;
           const gs = state[g.id] || { done: {}, extras: [] };
-          const items: SubTask[] = [...g.tasks, ...gs.extras];
+          const items = itemsFor(g.id);
+          const groupMeta = ts.groups[g.id];
           return (
             <motion.div
               key={g.id}
@@ -193,15 +221,17 @@ export function TaskTracker() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-3 flex-wrap">
                       <h3 className="font-display italic text-2xl lg:text-3xl text-oxblood-700 leading-tight">
-                        {g.title}
+                        {groupMeta.title}
                       </h3>
                       <span className="inline-flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${priorityDot[g.priority]}`} />
-                        <span className="eyebrow text-ink-900/60">{priorityLabel(g.priority)}</span>
+                        <span className="eyebrow text-ink-900/60">
+                          {ts.priority[g.priority]}
+                        </span>
                       </span>
                     </div>
                     <p className="italic text-ink-900/60 text-sm mt-0.5">
-                      {g.subtitle}
+                      {groupMeta.subtitle}
                     </p>
                   </div>
                 </div>
@@ -240,18 +270,18 @@ export function TaskTracker() {
                   >
                     <div className="px-5 lg:px-8 pb-6 pt-2 border-t border-brass-500/25">
                       <ul className="space-y-1">
-                        {items.map((t) => {
-                          const done = !!gs.done[t.id];
-                          const isExtra = t.id.startsWith("x-");
+                        {items.map((item) => {
+                          const done = !!gs.done[item.id];
+                          const isExtra = item.id.startsWith("x-");
                           return (
                             <li
-                              key={t.id}
+                              key={item.id}
                               className="group flex items-start gap-3 py-2"
                             >
                               <span className="pt-[3px]">
                                 <Check
                                   done={done}
-                                  onClick={() => toggle(g.id, t.id)}
+                                  onClick={() => toggle(g.id, item.id)}
                                 />
                               </span>
                               <div className="flex-1 min-w-0">
@@ -262,21 +292,20 @@ export function TaskTracker() {
                                       : "text-ink-900"
                                   }`}
                                 >
-                                  {t.label}
+                                  {item.label}
                                 </p>
-                                {t.note && (
+                                {item.note && (
                                   <p className="text-xs italic text-ink-900/55 mt-0.5">
-                                    {t.note}
+                                    {item.note}
                                   </p>
                                 )}
                               </div>
                               {isExtra && (
                                 <button
-                                  onClick={() => removeExtra(g.id, t.id)}
+                                  onClick={() => removeExtra(g.id, item.id)}
                                   className="opacity-0 group-hover:opacity-100 text-xs italic text-oxblood-700 transition-opacity"
-                                  aria-label="Remove subtask"
                                 >
-                                  remove
+                                  {ts.remove}
                                 </button>
                               )}
                             </li>
@@ -295,14 +324,14 @@ export function TaskTracker() {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") addExtra(g.id);
                           }}
-                          placeholder="Something we missed…"
+                          placeholder={ts.placeholder}
                           className="flex-1 bg-transparent py-2 font-display italic text-ink-900 placeholder-ink-900/35 border-b border-ink-900/15 focus:border-oxblood-700 focus:outline-none transition-colors"
                         />
                         <button
                           onClick={() => addExtra(g.id)}
                           className="eyebrow text-oxblood-700 hover:text-oxblood-900 transition-colors"
                         >
-                          Add
+                          {ts.add}
                         </button>
                       </div>
                     </div>
@@ -314,9 +343,7 @@ export function TaskTracker() {
         })}
       </div>
 
-      <p className="mt-10 text-sm italic text-ink-900/60">
-        Checked items persist in your browser. Add notes freely to whatever we missed.
-      </p>
+      <p className="mt-10 text-sm italic text-ink-900/60">{ts.footer_note}</p>
     </section>
   );
 }

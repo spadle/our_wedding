@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
+import { useT } from "../i18n/context";
+import { LanguageSwitch } from "./LanguageSwitch";
 
-const chapters = [
-  { id: "prelude", numeral: "·", label: "Prelude" },
-  { id: "ceremony", numeral: "I", label: "Ceremony" },
-  { id: "circles", numeral: "II", label: "Circles" },
-  { id: "tasks", numeral: "III", label: "Tasks" },
-  { id: "budget", numeral: "IV", label: "Budget" },
-  { id: "timeline", numeral: "V", label: "Timeline" },
-  { id: "vows", numeral: "✦", label: "Postscript" },
+type ChapterMeta = {
+  id: string;
+  numeral: string;
+  key: "prelude" | "ceremony" | "circles" | "tasks" | "budget" | "timeline" | "postscript";
+};
+
+const chapters: ChapterMeta[] = [
+  { id: "prelude", numeral: "·", key: "prelude" },
+  { id: "ceremony", numeral: "I", key: "ceremony" },
+  { id: "circles", numeral: "II", key: "circles" },
+  { id: "tasks", numeral: "III", key: "tasks" },
+  { id: "budget", numeral: "IV", key: "budget" },
+  { id: "timeline", numeral: "V", key: "timeline" },
+  { id: "vows", numeral: "✦", key: "postscript" },
 ];
 
 export function Navigation() {
+  const t = useT();
   const [active, setActive] = useState("prelude");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -37,12 +46,13 @@ export function Navigation() {
   }, []);
 
   const activeChapter = chapters.find((c) => c.id === active) || chapters[0];
+  const activeLabel = t.nav[activeChapter.key];
 
   return (
     <>
       {/* ─────────── Desktop — slender vertical rail ─────────── */}
       <nav
-        aria-label="Chapter index"
+        aria-label={t.nav.index_aria}
         className="hidden lg:flex fixed left-5 top-1/2 -translate-y-1/2 z-40 flex-col items-start gap-5 text-ink-900"
       >
         <a
@@ -59,7 +69,7 @@ export function Navigation() {
               key={c.id}
               href={`#${c.id}`}
               className="group flex items-center gap-3 h-5"
-              aria-label={c.label}
+              aria-label={t.nav[c.key]}
               aria-current={isActive ? "true" : undefined}
             >
               <span
@@ -79,7 +89,7 @@ export function Navigation() {
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="eyebrow text-ink-900/65 whitespace-nowrap pointer-events-none"
               >
-                {c.label}
+                {t.nav[c.key]}
               </motion.span>
             </a>
           );
@@ -88,10 +98,12 @@ export function Navigation() {
         <a
           href="#vows"
           className="numeral text-brass-700 text-lg block text-center w-5 leading-none"
-          aria-label="Postscript"
+          aria-label={t.nav.postscript}
         >
           ✦
         </a>
+        <div className="w-px h-6 bg-brass-500/40 ml-[10px] mt-2" />
+        <LanguageSwitch orientation="vertical" className="ml-[-3px]" />
       </nav>
 
       {/* ─────────── Mobile — sticky top bar with animated index ─────────── */}
@@ -108,7 +120,7 @@ export function Navigation() {
             {/* Monogram */}
             <a
               href="#prelude"
-              aria-label="Top"
+              aria-label={t.nav.prelude}
               className="flex items-baseline gap-0.5 text-oxblood-700 shrink-0"
             >
               <span className="font-display italic text-xl leading-none">P</span>
@@ -126,7 +138,7 @@ export function Navigation() {
               onClick={() => setMobileOpen((v) => !v)}
               className="flex-1 flex items-center gap-2 overflow-hidden text-left min-w-0"
               aria-expanded={mobileOpen}
-              aria-label="Open chapter index"
+              aria-label={t.nav.open_index}
             >
               <AnimatePresence mode="wait">
                 <motion.span
@@ -142,7 +154,7 @@ export function Navigation() {
               </AnimatePresence>
               <AnimatePresence mode="wait">
                 <motion.span
-                  key={activeChapter.id + "-label"}
+                  key={activeChapter.id + "-" + activeLabel}
                   initial={{ y: 14, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -14, opacity: 0 }}
@@ -153,7 +165,7 @@ export function Navigation() {
                   }}
                   className="font-display italic text-lg text-oxblood-700 leading-none truncate"
                 >
-                  {activeChapter.label}
+                  {activeLabel}
                 </motion.span>
               </AnimatePresence>
               <motion.span
@@ -165,10 +177,8 @@ export function Navigation() {
               </motion.span>
             </button>
 
-            {/* Date badge */}
-            <span className="eyebrow text-ink-900/55 shrink-0 hidden xs:inline sm:inline">
-              10·10·26
-            </span>
+            {/* Language switch — tiny */}
+            <LanguageSwitch className="shrink-0 scale-95 origin-right" />
           </div>
 
           {/* Scroll progress bar */}
@@ -208,7 +218,9 @@ export function Navigation() {
                         >
                           {c.numeral}
                         </span>
-                        <span className="font-display text-lg">{c.label}</span>
+                        <span className="font-display text-lg">
+                          {t.nav[c.key]}
+                        </span>
                         {isActive && (
                           <motion.span
                             layoutId="mobile-active-dot"
@@ -226,7 +238,7 @@ export function Navigation() {
                     className="flex items-center justify-center gap-3 text-brass-700 eyebrow"
                   >
                     <span>✦</span>
-                    <span>Postscript</span>
+                    <span>{t.nav.postscript}</span>
                     <span>✦</span>
                   </a>
                 </li>

@@ -6,20 +6,23 @@ import { TaskTracker } from "./components/TaskTracker";
 import { Budget } from "./components/Budget";
 import { Timeline } from "./components/Timeline";
 import { Postscript } from "./components/Postscript";
+import { LanguageProvider } from "./i18n/context";
 
 export default function App() {
   return (
-    <div className="grain vignette min-h-screen">
-      <Navigation />
-      <main>
-        <Hero />
-        <Ceremony />
-        <GuestList />
-        <TaskTracker />
-        <Budget />
-        <Timeline />
-        <Postscript />
-      </main>
-    </div>
+    <LanguageProvider>
+      <div className="grain vignette min-h-screen">
+        <Navigation />
+        <main>
+          <Hero />
+          <Ceremony />
+          <GuestList />
+          <TaskTracker />
+          <Budget />
+          <Timeline />
+          <Postscript />
+        </main>
+      </div>
+    </LanguageProvider>
   );
 }

@@ -1,81 +1,85 @@
+import type { Translation } from "../i18n/translations";
+
+export type RelationKey = keyof Translation["circlesSection"]["relations"];
+
+export type GuestGroupKey =
+  | "wendy_immediate"
+  | "wendy_sister"
+  | "wendy_extended"
+  | "wendy_friends"
+  | "paul_immediate"
+  | "paul_friends";
+
 export type Guest = {
   name: string;
-  relation: string;
-  group?: string;
+  relationKey: RelationKey;
 };
 
 export type GuestGroup = {
-  title: string;
-  subtitle: string;
+  key: GuestGroupKey;
   guests: Guest[];
 };
 
 export const wendyCircle: GuestGroup[] = [
   {
-    title: "Immediate",
-    subtitle: "Her mother, father & siblings",
+    key: "wendy_immediate",
     guests: [
-      { name: "Wendy", relation: "the bride" },
-      { name: "Rosa", relation: "mother" },
-      { name: "Hulio", relation: "father" },
-      { name: "Moises", relation: "younger brother" },
-      { name: "David", relation: "younger brother" },
-      { name: "Gaby", relation: "younger sister" },
+      { name: "Wendy", relationKey: "bride" },
+      { name: "Rosa", relationKey: "mother" },
+      { name: "Hulio", relationKey: "father" },
+      { name: "Moises", relationKey: "younger_brother" },
+      { name: "David", relationKey: "younger_brother" },
+      { name: "Gaby", relationKey: "younger_sister" },
     ],
   },
   {
-    title: "Sister's Family",
-    subtitle: "Jaimee & the little ones",
+    key: "wendy_sister",
     guests: [
-      { name: "Jaimee", relation: "older sister" },
-      { name: "Joshua", relation: "first nephew" },
-      { name: "Mathew", relation: "second nephew" },
-      { name: "Deliliah", relation: "niece" },
+      { name: "Jaimee", relationKey: "older_sister" },
+      { name: "Joshua", relationKey: "first_nephew" },
+      { name: "Mathew", relationKey: "second_nephew" },
+      { name: "Deliliah", relationKey: "niece" },
     ],
   },
   {
-    title: "Extended",
-    subtitle: "Aunt & cousin's household",
+    key: "wendy_extended",
     guests: [
-      { name: "Mirian", relation: "aunt" },
-      { name: "Noe", relation: "cousin" },
-      { name: "Noe's mother", relation: "aunt" },
-      { name: "Noe's father", relation: "uncle" },
+      { name: "Mirian", relationKey: "aunt" },
+      { name: "Noe", relationKey: "cousin" },
+      { name: "Noe's mother", relationKey: "aunt" },
+      { name: "Noe's father", relationKey: "uncle" },
     ],
   },
   {
-    title: "Friends",
-    subtitle: "Roxy's family & close circle",
+    key: "wendy_friends",
     guests: [
-      { name: "Roxy", relation: "friend" },
-      { name: "Roxy's husband", relation: "partner" },
-      { name: "Roxy's child I", relation: "child" },
-      { name: "Roxy's child II", relation: "child" },
-      { name: "Leslie", relation: "close friend" },
-      { name: "Deanna", relation: "close friend" },
-      { name: "Luna", relation: "close friend" },
-      { name: "Jenine", relation: "coworker" },
+      { name: "Roxy", relationKey: "friend" },
+      { name: "Roxy's husband", relationKey: "partner" },
+      { name: "Roxy's child I", relationKey: "child" },
+      { name: "Roxy's child II", relationKey: "child" },
+      { name: "Leslie", relationKey: "close_friend" },
+      { name: "Deanna", relationKey: "close_friend" },
+      { name: "Luna", relationKey: "close_friend" },
+      { name: "Jenine", relationKey: "coworker" },
     ],
   },
 ];
 
 export const paulCircle: GuestGroup[] = [
   {
-    title: "Immediate",
-    subtitle: "His parents & sister",
+    key: "paul_immediate",
     guests: [
-      { name: "Paul", relation: "the groom" },
-      { name: "Peter", relation: "father" },
-      { name: "Grace", relation: "mother" },
-      { name: "Esther", relation: "younger sister" },
+      { name: "Paul", relationKey: "groom" },
+      { name: "Peter", relationKey: "father" },
+      { name: "Grace", relationKey: "mother" },
+      { name: "Esther", relationKey: "younger_sister" },
     ],
   },
   {
-    title: "Friends",
-    subtitle: "The dear couple",
+    key: "paul_friends",
     guests: [
-      { name: "Jay", relation: "close friend" },
-      { name: "Yukyung", relation: "close friend" },
+      { name: "Jay", relationKey: "close_friend" },
+      { name: "Yukyung", relationKey: "close_friend" },
     ],
   },
 ];

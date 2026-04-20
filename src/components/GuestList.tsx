@@ -5,30 +5,43 @@ import {
   paulCircle,
   wendyCircle,
   type GuestGroup,
+  type GuestGroupKey,
 } from "../data/guests";
+import { useT } from "../i18n/context";
+import type { Translation } from "../i18n/translations";
 
 function Circle({
   name,
   total,
   groups,
   accent,
+  t,
 }: {
   name: string;
   total: number;
   groups: GuestGroup[];
   accent: string;
+  t: Translation;
 }) {
+  const grp = t.circlesSection.groups;
+  const titleFor = (k: GuestGroupKey) =>
+    grp[`${k}_title` as keyof typeof grp];
+  const subtitleFor = (k: GuestGroupKey) =>
+    grp[`${k}_subtitle` as keyof typeof grp];
+
   return (
     <div className="relative">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <p className="eyebrow text-brass-700 mb-2">Circle of</p>
+          <p className="eyebrow text-brass-700 mb-2">
+            {t.circlesSection.circle_of}
+          </p>
           <h3 className="font-display italic text-5xl lg:text-7xl text-oxblood-700 leading-none">
             {name}
           </h3>
         </div>
         <div className="text-right">
-          <p className="eyebrow text-ink-900/50">count</p>
+          <p className="eyebrow text-ink-900/50">{t.circlesSection.count}</p>
           <p className="numeral text-4xl lg:text-5xl text-oxblood-700">
             {String(total).padStart(2, "0")}
           </p>
@@ -40,7 +53,7 @@ function Circle({
       <div className="space-y-10">
         {groups.map((g, idx) => (
           <motion.div
-            key={g.title}
+            key={g.key}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -52,16 +65,18 @@ function Circle({
               </span>
               <div>
                 <p className="font-display italic text-2xl text-ink-900">
-                  {g.title}
+                  {titleFor(g.key)}
                 </p>
-                <p className="eyebrow text-ink-900/50 mt-1">{g.subtitle}</p>
+                <p className="eyebrow text-ink-900/50 mt-1">
+                  {subtitleFor(g.key)}
+                </p>
               </div>
             </div>
 
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 pl-0 sm:pl-10">
-              {g.guests.map((guest) => (
+              {g.guests.map((guest, gi) => (
                 <li
-                  key={guest.name + guest.relation}
+                  key={guest.name + gi}
                   className="flex items-baseline gap-3 py-1 border-b border-ink-900/10 group"
                 >
                   <span className="font-display text-lg text-ink-900 group-hover:text-oxblood-700 transition-colors">
@@ -69,7 +84,7 @@ function Circle({
                   </span>
                   <span className="flex-1 border-b border-dotted border-ink-900/20 translate-y-[-4px]" />
                   <span className="text-xs italic text-ink-900/60">
-                    {guest.relation}
+                    {t.circlesSection.relations[guest.relationKey]}
                   </span>
                 </li>
               ))}
@@ -82,6 +97,7 @@ function Circle({
 }
 
 export function GuestList() {
+  const t = useT();
   return (
     <section
       id="circles"
@@ -89,9 +105,9 @@ export function GuestList() {
     >
       <SectionHeader
         numeral="II"
-        eyebrow="Chapter Two"
-        title="The Circle"
-        subtitle={`${guestCounts.total} hearts at one table.`}
+        eyebrow={t.chapter.two}
+        title={t.circlesSection.title}
+        subtitle={`${guestCounts.total} ${t.circlesSection.subtitle_suffix}`}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-24 max-w-7xl">
@@ -100,12 +116,14 @@ export function GuestList() {
           total={guestCounts.wendy}
           groups={wendyCircle}
           accent="bg-gradient-to-r from-oxblood-700/60 via-brass-500 to-transparent"
+          t={t}
         />
         <Circle
           name="Paul"
           total={guestCounts.paul}
           groups={paulCircle}
           accent="bg-gradient-to-r from-transparent via-brass-500 to-oxblood-700/60"
+          t={t}
         />
       </div>
 
@@ -118,7 +136,7 @@ export function GuestList() {
       >
         <div className="hairline w-32" />
         <p className="font-display italic text-xl lg:text-2xl text-ink-900/70">
-          a small wedding, full of the right people
+          {t.circlesSection.tagline}
         </p>
         <div className="hairline w-32" />
       </motion.div>

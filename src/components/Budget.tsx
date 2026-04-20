@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
 import { SectionHeader } from "./SectionHeader";
-import { defaultBudget } from "../data/budget";
+import { defaultBudget, type BudgetCategoryId } from "../data/budget";
 import { usePersistentState } from "../lib/usePersistentState";
+import { useT } from "../i18n/context";
 
 type Entry = { allocated: number; spent: number };
 type State = Record<string, Entry>;
@@ -20,6 +21,9 @@ const usd = (n: number) =>
   }).format(n);
 
 export function Budget() {
+  const t = useT();
+  const bs = t.budgetSection;
+
   const [state, setState] = usePersistentState<State>("pw_budget_v1", seed());
 
   const totals = useMemo(() => {
@@ -44,9 +48,9 @@ export function Budget() {
     >
       <SectionHeader
         numeral="IV"
-        eyebrow="Chapter Four"
-        title="The Quiet Ledger"
-        subtitle="Allocate gently. Spend honestly."
+        eyebrow={t.chapter.four}
+        title={bs.title}
+        subtitle={bs.subtitle}
       />
 
       {/* Totals band */}
@@ -58,24 +62,24 @@ export function Budget() {
         className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-brass-500/40 mb-14 bg-ivory-50/60"
       >
         {[
-          { label: "Allocated", value: totals.allocated, tone: "text-ink-900" },
-          { label: "Spent", value: totals.spent, tone: "text-oxblood-700" },
+          { label: bs.allocated, value: totals.allocated, tone: "text-ink-900" },
+          { label: bs.spent, value: totals.spent, tone: "text-oxblood-700" },
           {
-            label: "Remaining",
+            label: bs.remaining,
             value: totals.remaining,
             tone:
               totals.remaining < 0 ? "text-oxblood-700" : "text-sage-500",
           },
-        ].map((t, i) => (
+        ].map((slot, i) => (
           <div
-            key={t.label}
+            key={i}
             className={`p-8 lg:p-10 flex flex-col ${
               i < 2 ? "border-b md:border-b-0 md:border-r border-brass-500/30" : ""
             }`}
           >
-            <span className="eyebrow text-brass-700 mb-4">{t.label}</span>
-            <span className={`numeral text-5xl lg:text-6xl ${t.tone}`}>
-              {usd(t.value)}
+            <span className="eyebrow text-brass-700 mb-4">{slot.label}</span>
+            <span className={`numeral text-5xl lg:text-6xl ${slot.tone}`}>
+              {usd(slot.value)}
             </span>
           </div>
         ))}
@@ -84,6 +88,7 @@ export function Budget() {
       {/* Category rows */}
       <div className="space-y-3 max-w-5xl">
         {defaultBudget.map((cat, idx) => {
+          const meta = bs.categories[cat.id as BudgetCategoryId];
           const entry = state[cat.id] || { allocated: cat.suggested, spent: 0 };
           const pct = entry.allocated > 0
             ? Math.min(100, Math.round((entry.spent / entry.allocated) * 100))
@@ -103,17 +108,17 @@ export function Budget() {
                   {String(idx + 1).padStart(2, "0")}
                 </span>
                 <div>
-                  <p className="font-display text-xl text-ink-900">{cat.name}</p>
-                  {cat.hint && (
+                  <p className="font-display text-xl text-ink-900">{meta.name}</p>
+                  {meta.hint && (
                     <p className="text-xs italic text-ink-900/50 mt-0.5">
-                      {cat.hint}
+                      {meta.hint}
                     </p>
                   )}
                 </div>
               </div>
 
               <label className="col-span-6 sm:col-span-2 flex flex-col">
-                <span className="eyebrow text-ink-900/50 mb-1">Allocated</span>
+                <span className="eyebrow text-ink-900/50 mb-1">{bs.allocated}</span>
                 <div className="flex items-center gap-1 border-b border-ink-900/20 focus-within:border-oxblood-700 transition-colors">
                   <span className="numeral text-ink-900/60">$</span>
                   <input
@@ -129,7 +134,7 @@ export function Budget() {
               </label>
 
               <label className="col-span-6 sm:col-span-2 flex flex-col">
-                <span className="eyebrow text-ink-900/50 mb-1">Spent</span>
+                <span className="eyebrow text-ink-900/50 mb-1">{bs.spent}</span>
                 <div className="flex items-center gap-1 border-b border-ink-900/20 focus-within:border-oxblood-700 transition-colors">
                   <span className="numeral text-ink-900/60">$</span>
                   <input
@@ -169,12 +174,10 @@ export function Budget() {
         })}
       </div>
 
-      <div className="mt-10 flex items-center justify-between">
-        <p className="text-sm italic text-ink-900/60">
-          Values are saved locally in your browser. Nothing leaves this device.
-        </p>
+      <div className="mt-10 flex items-center justify-between gap-4 flex-wrap">
+        <p className="text-sm italic text-ink-900/60">{bs.note}</p>
         <button onClick={reset} className="btn-brass">
-          Reset to suggestions
+          {bs.reset}
         </button>
       </div>
     </section>

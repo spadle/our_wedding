@@ -1,8 +1,11 @@
 import { motion } from "motion/react";
 import { Monogram, Ornament } from "./Ornament";
 import { useCountdown } from "../lib/useCountdown";
+import { useT } from "../i18n/context";
 
 export function Postscript() {
+  const t = useT();
+  const ps = t.postscriptSection;
   const { days } = useCountdown();
   return (
     <section
@@ -36,7 +39,7 @@ export function Postscript() {
           className="flex items-center justify-center gap-5 text-brass-300 mb-8"
         >
           <Ornament width={100} />
-          <span className="eyebrow">Postscript</span>
+          <span className="eyebrow">{ps.label}</span>
           <Ornament width={100} />
         </motion.div>
 
@@ -45,10 +48,10 @@ export function Postscript() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="font-display italic font-light text-5xl lg:text-7xl leading-[1.05] text-ivory-100 text-balance"
+          className="font-display italic font-light text-4xl sm:text-5xl lg:text-6xl leading-[1.15] text-ivory-100 text-balance"
         >
-          "the best part of wedding a person <br className="hidden sm:block" />
-          is the waking every morning after."
+          {ps.quote_a} <br className="hidden sm:block" />
+          {ps.quote_b}
         </motion.h2>
 
         <motion.p
@@ -58,7 +61,7 @@ export function Postscript() {
           transition={{ duration: 1, delay: 0.5 }}
           className="mt-10 font-display italic text-brass-300 text-lg"
         >
-          — for Wendy, with every day —
+          {ps.dedication}
         </motion.p>
 
         <motion.div
@@ -69,18 +72,18 @@ export function Postscript() {
           className="mt-16 pt-10 border-t border-brass-300/30 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left"
         >
           <div>
-            <p className="eyebrow text-brass-300/70 mb-2">The date</p>
+            <p className="eyebrow text-brass-300/70 mb-2">{ps.the_date}</p>
             <p className="font-display italic text-2xl">10 · 10 · 2026</p>
           </div>
           <div>
-            <p className="eyebrow text-brass-300/70 mb-2">Until then</p>
+            <p className="eyebrow text-brass-300/70 mb-2">{ps.until_then}</p>
             <p className="font-display italic text-2xl">
-              <span className="numeral">{days}</span> days
+              <span className="numeral">{days}</span> {ps.days}
             </p>
           </div>
           <div>
-            <p className="eyebrow text-brass-300/70 mb-2">Made by</p>
-            <p className="font-display italic text-2xl">Paul, for us</p>
+            <p className="eyebrow text-brass-300/70 mb-2">{ps.made_by}</p>
+            <p className="font-display italic text-2xl">{ps.made_by_value}</p>
           </div>
         </motion.div>
       </div>
